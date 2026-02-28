@@ -207,7 +207,7 @@ async function loadTarawih() {
         }
 
         document.getElementById("tarawih-content").innerHTML =
-            html || "<div>Tidak ada petugas hari ini</div>";
+            html || "<div>Data sedang dalam proses update....</div>";
 
     } catch (e) {
         document.getElementById("tarawih-content").innerHTML =
@@ -251,7 +251,7 @@ async function loadKhotib() {
         }
 
         document.getElementById("khotib-content").innerHTML =
-            html || "<div>Tidak ada petugas hari ini</div>";
+            html || "<div>Data sedang dalam proses update....</div>";
 
     } catch (e) {
         document.getElementById("khotib-content").innerHTML =
@@ -285,12 +285,12 @@ async function loadKajian() {
 
         if (!found) {
             document.getElementById("kajian-box").textContent =
-                "Tidak ada kajian hari ini";
+                "Data sedang dalam proses update....";
         }
 
     } catch (e) {
         document.getElementById("kajian-box").textContent =
-            "Info kajian tidak tersedia";
+            "Data sedang dalam proses update....";
     }
 }
 
@@ -307,7 +307,7 @@ async function loadHadits() {
 
         if (haditsList.length === 0) {
             document.getElementById("hadits-box").textContent =
-                "Hadits tidak tersedia";
+                "Data sedang dalam proses update....";
             return;
         }
 
