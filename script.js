@@ -102,6 +102,51 @@ async function fetchCSV(url) {
    const res = await fetch(url, { cache: "no-store" });
    return (await res.text()).split("\n").slice(1);
 }
+/* ================= LOAD HADITS ================= */
+async function loadHadits() {
+    try {
+        const rows = await fetchCSV(haditsURL);
+
+        haditsList = rows
+            .map(r => r.split(",").map(c => c.trim()))
+            .filter(cols => cols[1]?.toUpperCase() === "YA")
+            .map(cols => cols[0]);
+
+        if (haditsList.length === 0) {
+            document.getElementById("hadits-box").textContent =
+                "Data sedang dalam proses update....";
+            return;
+        }
+
+        haditsIndex = 0;
+        showHadits();
+
+    } catch (e) {
+        document.getElementById("hadits-box").textContent =
+            "Hadits gagal dimuat";
+    }
+}
+
+function showHadits() {
+
+    if (!haditsList.length) return;
+
+    const box = document.getElementById("hadits-box");
+
+    box.classList.add("fade");
+
+    setTimeout(() => {
+
+        box.textContent = haditsList[haditsIndex];
+
+        box.classList.remove("fade");
+
+        haditsIndex++;
+        if (haditsIndex >= haditsList.length)
+            haditsIndex = 0;
+
+    }, 300);
+}
 /* ================= JADWAL ================= */
 async function loadJadwal() {
    const rows = await fetchCSV(jadwalURL);
@@ -264,9 +309,18 @@ setInterval(showSlide,10000);
 setInterval(loadJadwal,60000);
 setInterval(loadTarawih,60000);
 setInterval(loadKhotib,60000);
+setInterval(showHadits, 8000);
+setInterval(loadHadits, 180000);
+setInterval(() => {
+    if (todayCols) {
+        updateCountdown(todayCols);
+        highlightNextPrayer(todayCols);
+    }
+}, 1000);
 /* ================= INIT ================= */
 updateClock();
 showSlide();
 loadJadwal();
 loadTarawih();
 loadKhotib();
+loadHadits();
