@@ -161,7 +161,7 @@ function updateCountdown(cols) {
       const mins = Math.floor(diff / 60000);
       const secs = Math.floor((diff % 60000) / 1000);
       document.getElementById("next-prayer-name")
-          .textContent = "Saatnya Sholat " + activePrayer.name;
+          .textContent = "Waktu Sholat " + activePrayer.name;
       document.getElementById("next-prayer-countdown")
           .textContent =
           `00:${String(mins).padStart(2,"0")}:${
