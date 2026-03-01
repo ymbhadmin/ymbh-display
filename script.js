@@ -8,7 +8,22 @@ let slideIndex = 0;
 let haditsList = [];
 let haditsIndex = 0;
 let todayCols = null;
+let slideRotationInterval = null;
 
+function startSlideRotation() {
+    if (slideRotationInterval) return;
+
+    slideRotationInterval = setInterval(() => {
+        showSlide(true); // true = allow rotate
+    }, 10000);
+}
+
+function stopSlideRotation() {
+    if (slideRotationInterval) {
+        clearInterval(slideRotationInterval);
+        slideRotationInterval = null;
+    }
+}
 /* ================= DATE MATCH ================= */
 function isTodayMatch(cols) {
    const now = new Date();
@@ -88,18 +103,19 @@ function getSlidesForToday() {
        ? ["slide-jadwal", "slide-tarawih", "slide-khotib"]
        : ["slide-jadwal", "slide-tarawih"];
 }
-function showSlide() {
+function showSlide(allowRotate = false) {
 
     const prayerState = todayCols ? getPrayerState(todayCols) : null;
 
     let activeSlides;
 
     if (prayerState) {
-        // Lock di jadwal
         activeSlides = ["slide-jadwal"];
         slideIndex = 0;
+        stopSlideRotation();
     } else {
         activeSlides = getSlidesForToday();
+        startSlideRotation();
     }
 
     document.querySelectorAll(".slide")
@@ -108,8 +124,8 @@ function showSlide() {
     const active = document.getElementById(activeSlides[slideIndex]);
     if (active) active.classList.remove("hidden");
 
-    // 🔑 Hanya rotasi jika TIDAK dalam prayer mode
-    if (!prayerState) {
+    // Hanya rotasi kalau diizinkan dan tidak prayer
+    if (allowRotate && !prayerState) {
         slideIndex++;
         if (slideIndex >= activeSlides.length) slideIndex = 0;
     }
@@ -353,7 +369,6 @@ function updateClock(){
 }
 /* ================= INTERVAL ================= */
 setInterval(updateClock,1000);
-setInterval(showSlide,10000);
 setInterval(loadJadwal,60000);
 setInterval(loadTarawih,60000);
 setInterval(loadKhotib,60000);
@@ -361,19 +376,13 @@ setInterval(showHadits, 8000);
 setInterval(loadHadits, 180000);
 setInterval(() => {
     if (todayCols) {
-
         updateCountdown(todayCols);
         highlightNextPrayer(todayCols);
-
-        const prayerState = getPrayerState(todayCols);
-
-        if (prayerState) {
-            showSlide(); // hanya paksa lock kalau sedang prayer
-        }
     }
 }, 1000);
 /* ================= INIT ================= */
 updateClock();
+startSlideRotation();
 showSlide();
 loadJadwal();
 loadTarawih();
