@@ -89,22 +89,30 @@ function getSlidesForToday() {
        : ["slide-jadwal", "slide-tarawih"];
 }
 function showSlide() {
-   let activeSlides;
-   const prayerState = todayCols ? getPrayerState(todayCols) : null;
 
-   if (prayerState) {
-       activeSlides = ["slide-jadwal"];
-       slideIndex = 0;
-   } else {
-       activeSlides = getSlidesForToday();
-   }
-   document.querySelectorAll(".slide").forEach(s =>
-       s.classList.add("hidden")
-   );
-   const active = document.getElementById(activeSlides[slideIndex]);
-   if (active) active.classList.remove("hidden");
-   slideIndex++;
-   if (slideIndex >= activeSlides.length) slideIndex = 0;
+    const prayerState = todayCols ? getPrayerState(todayCols) : null;
+
+    let activeSlides;
+
+    if (prayerState) {
+        // Lock di jadwal
+        activeSlides = ["slide-jadwal"];
+        slideIndex = 0;
+    } else {
+        activeSlides = getSlidesForToday();
+    }
+
+    document.querySelectorAll(".slide")
+        .forEach(s => s.classList.add("hidden"));
+
+    const active = document.getElementById(activeSlides[slideIndex]);
+    if (active) active.classList.remove("hidden");
+
+    // 🔑 Hanya rotasi jika TIDAK dalam prayer mode
+    if (!prayerState) {
+        slideIndex++;
+        if (slideIndex >= activeSlides.length) slideIndex = 0;
+    }
 }
 /* ================= FETCH ================= */
 async function fetchCSV(url) {
@@ -345,7 +353,7 @@ function updateClock(){
 }
 /* ================= INTERVAL ================= */
 setInterval(updateClock,1000);
-setInterval(showSlide,1000);
+setInterval(showSlide,10000);
 setInterval(loadJadwal,60000);
 setInterval(loadTarawih,60000);
 setInterval(loadKhotib,60000);
@@ -355,6 +363,7 @@ setInterval(() => {
     if (todayCols) {
         updateCountdown(todayCols);
         highlightNextPrayer(todayCols);
+        showSlide();
     }
 }, 1000);
 /* ================= INIT ================= */
