@@ -361,9 +361,15 @@ setInterval(showHadits, 8000);
 setInterval(loadHadits, 180000);
 setInterval(() => {
     if (todayCols) {
+
         updateCountdown(todayCols);
         highlightNextPrayer(todayCols);
-        showSlide();
+
+        const prayerState = getPrayerState(todayCols);
+
+        if (prayerState) {
+            showSlide(); // hanya paksa lock kalau sedang prayer
+        }
     }
 }, 1000);
 /* ================= INIT ================= */
