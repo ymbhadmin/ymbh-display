@@ -70,7 +70,7 @@ function getPrayerState(cols) {
         const prepareStart = adzan.getTime() - 5*60000;
         const activeEnd    = adzan.getTime() + 15*60000;
 
-        if (nowMs >= prepareStart && nowMs < adzan.getTime()) {
+        if (nowMs >= prepareStart && nowMs <= adzan.getTime()) {
             return { type:"prepare", ...p, adzanTime:adzan.getTime() };
         }
 
@@ -345,7 +345,7 @@ function updateClock(){
 }
 /* ================= INTERVAL ================= */
 setInterval(updateClock,1000);
-setInterval(showSlide,10000);
+setInterval(showSlide,1000);
 setInterval(loadJadwal,60000);
 setInterval(loadTarawih,60000);
 setInterval(loadKhotib,60000);
