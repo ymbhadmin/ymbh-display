@@ -320,24 +320,33 @@ async function loadKhotib(){
 }
 /* ================= TARAWIH ================= */
 async function loadTarawih(){
-   const rows=await fetchCSV(tarawihURL);
-   let html="";
+   const rows = await fetchCSV(tarawihURL);
+   let html = "";
+
    rows.forEach(r=>{
-       const cols=r.split(",").map(c=>c.trim());
+       const cols = r.split(",").map(c=>c.trim());
+
        if(isTodayMatch(cols)){
-           html+=`
+           html += `
 <div>Townsite : Ustadz ${cols[3]}</div>
 <div>NCC : Ustadz ${cols[4]}</div>
 <div>Benete : Ustadz ${cols[5]}</div>
-<div>Smelter : Ustadz ${cols[6]}</div>`;
+<div>Smelter : Ustadz ${cols[6]}</div>
+`;
        }
    });
+
    document.getElementById("tarawih-hijri")
-       .textContent=getHijriDatePretty();
+       .textContent = getHijriDatePretty();
+
    document.getElementById("tarawih-date")
-       .textContent=new Date().toLocaleDateString("id-ID",{
-           weekday:"long",day:"numeric",month:"long",year:"numeric"
+       .textContent = new Date().toLocaleDateString("id-ID",{
+           weekday:"long",
+           day:"numeric",
+           month:"long",
+           year:"numeric"
        });
+
    document.getElementById("tarawih-content").innerHTML =
        html || "<div>Data sedang dalam proses update....</div>";
 }
