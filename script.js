@@ -326,10 +326,10 @@ async function loadTarawih(){
        const cols=r.split(",").map(c=>c.trim());
        if(isTodayMatch(cols)){
            html+=`
-<div>Townsite : ${cols[3]}</div>
-<div>NCC : ${cols[4]}</div>
-<div>Benete : ${cols[5]}</div>
-<div>Smelter : ${cols[6]}</div>`;
+<div>Townsite : Ustadz ${cols[3]}</div>
+<div>NCC : Ustadz ${cols[4]}</div>
+<div>Benete : Ustadz ${cols[5]}</div>
+<div>Smelter : Ustadz ${cols[6]}</div>`;
        }
    });
    document.getElementById("tarawih-hijri")
