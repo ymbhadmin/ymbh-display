@@ -45,33 +45,41 @@ function isAdzanWindow(cols) {
    }
    return false;
 }
-/* ================= ACT PRAY ================= */
-function getActivePrayerWindow(cols) {
-   const now = new Date();
-   const nowMs = now.getTime();
-   const prayers = [
-       { name: "Subuh",   key:"subuh",   time: cols[3] },
-       { name: "Dzuhur",  key:"dzuhur",  time: cols[4] },
-       { name: "Ashar",   key:"ashar",   time: cols[5] },
-       { name: "Maghrib", key:"maghrib", time: cols[6] },
-       { name: "Isya",    key:"isya",    time: cols[7] },
-   ];
-   for (let p of prayers) {
-       if (!p.time?.includes(":")) continue;
-       const [h, m] = p.time.split(":").map(Number);
-       const adzan = new Date();
-       adzan.setHours(h, m, 0, 0);
-       const start = adzan.getTime() - 5 * 60000;
-       const end   = adzan.getTime() + 15 * 60000;
-       if (nowMs >= start && nowMs <= end) {
-           return {
-               ...p,
-               adzanTime: adzan.getTime(),
-               endTime: end
-           };
-       }
-   }
-   return null;
+/* ================= PRAY STATE ================= */
+function getPrayerState(cols) {
+
+    const now = new Date();
+    const nowMs = now.getTime();
+
+    const prayers = [
+        { name:"Subuh", key:"subuh", time:cols[3] },
+        { name:"Dzuhur", key:"dzuhur", time:cols[4] },
+        { name:"Ashar", key:"ashar", time:cols[5] },
+        { name:"Maghrib", key:"maghrib", time:cols[6] },
+        { name:"Isya", key:"isya", time:cols[7] }
+    ];
+
+    for (let p of prayers) {
+
+        if (!p.time?.includes(":")) continue;
+
+        const [h,m] = p.time.split(":").map(Number);
+        const adzan = new Date();
+        adzan.setHours(h,m,0,0);
+
+        const prepareStart = adzan.getTime() - 5*60000;
+        const activeEnd    = adzan.getTime() + 15*60000;
+
+        if (nowMs >= prepareStart && nowMs < adzan.getTime()) {
+            return { type:"prepare", ...p, adzanTime:adzan.getTime() };
+        }
+
+        if (nowMs >= adzan.getTime() && nowMs <= activeEnd) {
+            return { type:"active", ...p, endTime:activeEnd };
+        }
+    }
+
+    return null;
 }
 /* ================= SLIDE ================= */
 function getSlidesForToday() {
@@ -82,8 +90,9 @@ function getSlidesForToday() {
 }
 function showSlide() {
    let activeSlides;
-   const activePrayer = todayCols ? getActivePrayerWindow(todayCols) : null;   
-   if (activePrayer) {
+   const prayerState = todayCols ? getPrayerState(todayCols) : null;
+
+   if (prayerState) {
        activeSlides = ["slide-jadwal"];
        slideIndex = 0;
    } else {
@@ -166,13 +175,17 @@ async function loadJadwal() {
 }
 /* ================= HIGHLIGHT ================= */
 function highlightNextPrayer(cols) {
-   const activePrayer = getActivePrayerWindow(cols);
-   if (activePrayer) {
-      document.querySelectorAll(".prayer-table tr")
-          .forEach(r => r.classList.remove("highlight"));
-      const row = document.getElementById("row-" + activePrayer.key);
-      if (row) row.classList.add("highlight");
-      return; // stop logic normal
+   const prayerState = getPrayerState(cols);
+
+   if (prayerState) {
+   
+       document.querySelectorAll(".prayer-table tr")
+           .forEach(r=>r.classList.remove("highlight"));
+   
+       const row = document.getElementById("row-"+prayerState.key);
+       if (row) row.classList.add("highlight");
+   
+       return;
    }
    
    const nowMinutes = new Date().getHours()*60 +
@@ -199,20 +212,47 @@ function highlightNextPrayer(cols) {
 }
 /* ================= COUNTDOWN ================= */
 function updateCountdown(cols) {
-   const activePrayer = getActivePrayerWindow(cols);
-   if (activePrayer) {
-      const now = new Date().getTime();
-      const diff = activePrayer.endTime - now;
-      const mins = Math.floor(diff / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      document.getElementById("next-prayer-name")
-          .textContent = "Waktu Sholat " + activePrayer.name;
-      document.getElementById("next-prayer-countdown")
-          .textContent =
-          `00:${String(mins).padStart(2,"0")}:${
-              String(secs).padStart(2,"0")
-          }`;
-      return;
+  const prayerState = getPrayerState(cols);
+
+   if (prayerState) {
+   
+       if (prayerState.type === "prepare") {
+   
+           const diff = prayerState.adzanTime - new Date().getTime();
+   
+           const h = Math.floor(diff/3600000);
+           const m = Math.floor((diff%3600000)/60000);
+           const s = Math.floor((diff%60000)/1000);
+   
+           document.getElementById("next-prayer-name")
+               .textContent = "Menuju " + prayerState.name;
+   
+           document.getElementById("next-prayer-countdown")
+               .textContent =
+               `${String(h).padStart(2,"0")}:${
+                   String(m).padStart(2,"0")}:${
+                   String(s).padStart(2,"0")}`;
+   
+           return;
+       }
+   
+       if (prayerState.type === "active") {
+   
+           const diff = prayerState.endTime - new Date().getTime();
+   
+           const m = Math.floor(diff/60000);
+           const s = Math.floor((diff%60000)/1000);
+   
+           document.getElementById("next-prayer-name")
+               .textContent = "Telah Masuk Waktu " + prayerState.name;
+   
+           document.getElementById("next-prayer-countdown")
+               .textContent =
+               `00:${String(m).padStart(2,"0")}:${
+                   String(s).padStart(2,"0")}`;
+   
+           return;
+       }
    }
    
    const now = new Date();
