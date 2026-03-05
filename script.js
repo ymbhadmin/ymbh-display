@@ -160,16 +160,31 @@ function getPrayerState(cols) {
 }
 /* ================= SLIDE ================= */
 function getSlidesForToday() {
+  // Mulai dari Jadwal terlebih dahulu
   const slides = ["slide-jadwal"];
 
-  // Tambahkan saat Ramadhan saja
-  if (isRamadhanNow()) {
-    slides.push("slide-tarawih", "slide-hadits-images");
-  }
+  const isFriday = new Date().getDay() === 5; // 0=Ahad ... 5=Jumat ... 6=Sabtu
 
-  // Hari Jumat (0=Ahad ... 5=Jumat ... 6=Sabtu)
-  if (new Date().getDay() === 5) {
-    slides.push("slide-khotib");
+  if (isRamadhanNow()) {
+    // Setelah Jadwal → Imam Tarawih
+    slides.push("slide-tarawih");
+
+    // (Opsional) jika Jumat dan kamu tetap ingin tampilkan Khotib, letakkan di sini:
+    if (isFriday) slides.push("slide-khotib");
+
+    // Lalu tampilkan slide Hadits Bergambar berulang 10x
+    const haditsRepeats = 10; // jumlah kali slide hadits ditahan
+    for (let i = 0; i < haditsRepeats; i++) {
+      slides.push("slide-hadits-images");
+    }
+
+    // Terakhir, kembali ke Jadwal (supaya rotasi jadi ... → Jadwal lagi)
+    slides.push("slide-jadwal");
+
+  } else {
+    // Di luar Ramadhan, rotasi normal (seperti semula)
+    if (isFriday) slides.push("slide-khotib");
+    // kamu bisa tambah slide lain non-Ramadhan di sini jika diperlukan
   }
 
   return slides;
