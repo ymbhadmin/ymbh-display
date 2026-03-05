@@ -25,6 +25,15 @@ const haditsImageURLs = [
   `${baseURL}/Hadist-Ramadhan/Hadist9.png`,
   `${baseURL}/Hadist-Ramadhan/Hadist10.png`,
 ];
+haditsImgIndex = Math.floor(Math.random() * haditsImageURLs.length);
+
+/* ========== UTIL: CEK SLIDE SEDANG TAMPIL ========== */
+function isSlideVisible(id) {
+  const el = document.getElementById(id);
+  if (!el) return false;
+  // visible kalau tidak ada class 'hidden'
+  return !el.classList.contains("hidden");
+}
 
 /* ========== CEK RAMADHAN (bulan Hijriyah ke-9) ========== */
 function isRamadhanNow() {
@@ -63,18 +72,20 @@ function preloadHaditsImages() {
   haditsImgsPreloaded = true;
 }
 
-/* ========== TAMPIL & ROTASI GAMBAR HADITS ========== */
+/* ========== TAMPIL & ROTASI GAMBAR HADITS (10 GAMBAR) ========== */
 function showHaditsImage() {
   const imgEl = document.getElementById("hadits-image");
   if (!imgEl || haditsImageURLs.length === 0) return;
 
-  // Opsional: hanya ganti gambar saat Ramadhan (biar tidak preload di luar Ramadhan)
-  if (!isRamadhanNow()) return;
+  // Hanya jalan saat Ramadhan & slide sedang tampil (hemat resource)
+  if (!isRamadhanNow() || !isSlideVisible("slide-hadits-images")) return;
 
   preloadHaditsImages();
+
   imgEl.src = haditsImageURLs[haditsImgIndex];
   haditsImgIndex = (haditsImgIndex + 1) % haditsImageURLs.length;
 }
+
 
 /* ================= DATE MATCH ================= */
 function isTodayMatch(cols) {
