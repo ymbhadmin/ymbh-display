@@ -34,6 +34,42 @@ function isSlideVisible(id) {
   return !el.classList.contains("hidden");
 }
 
+/* ====== BUILD RUNNING TEXT (TICKER) DARI DAFTAR HADITS ====== */
+function buildHaditsTickerText(list) {
+  if (!Array.isArray(list) || list.length === 0) return "Data sedang dalam proses update...";
+
+  // Gabungkan dengan bullet pemisah
+  const sep = '  •  ';
+  const text = list.join(sep);
+
+  return text;
+}
+
+/* Set isi ticker & setel durasi animasi berdasarkan lebar konten */
+function renderHaditsTicker(text) {
+  const track = document.getElementById('ticker-track');
+  const c1 = document.getElementById('ticker-chunk-1');
+  const c2 = document.getElementById('ticker-chunk-2');
+  if (!track || !c1 || !c2) return;
+
+  c1.textContent = text;
+  c2.textContent = text;
+
+  // Reset animasi supaya apply ulang
+  track.style.animation = 'none';
+
+  // Beri waktu browser hitung layout, lalu set durasi proporsional
+  requestAnimationFrame(() => {
+    // total width efektif adalah setengah dari track (karena 2 chunk kembar)
+    const halfWidth = c1.offsetWidth + 64; // 64px = gap, samakan dengan CSS
+    // Kecepatan: ~100 px/s → durasi = jarak / speed
+    const speedPxPerSec = 100; // ubah sesuai selera (lebih besar = lebih cepat)
+    const duration = Math.max(20, Math.round(halfWidth / speedPxPerSec)); // min 20s biar halus
+
+    track.style.animation = `ticker-scroll ${duration}s linear infinite`;
+  });
+}
+
 /* ========== CEK RAMADHAN (bulan Hijriyah ke-9) ========== */
 function isRamadhanNow() {
   try {
@@ -222,27 +258,23 @@ async function fetchCSV(url) {
 }
 /* ================= LOAD HADITS ================= */
 async function loadHadits() {
-    try {
-        const rows = await fetchCSV(haditsURL);
+  try {
+    const rows = await fetchCSV(haditsURL);
 
-        haditsList = rows
-            .map(r => r.split(",").map(c => c.trim()))
-            .filter(cols => cols[1]?.toUpperCase() === "YA")
-            .map(cols => cols[0]);
+    haditsList = rows
+      .map(r => r.split(",").map(c => c.trim()))
+      .filter(cols => cols[1]?.toUpperCase() === "YA")
+      .map(cols => cols[0])            // ambil teks hadits
+      .filter(Boolean);
 
-        if (haditsList.length === 0) {
-            document.getElementById("hadits-box").textContent =
-                "Data sedang dalam proses update....";
-            return;
-        }
+    const textForTicker = buildHaditsTickerText(haditsList);
 
-        haditsIndex = 0;
-        showHadits();
+    // Tampilkan ke ticker
+    renderHaditsTicker(textForTicker);
 
-    } catch (e) {
-        document.getElementById("hadits-box").textContent =
-            "Hadits gagal dimuat";
-    }
+  } catch (e) {
+    renderHaditsTicker("Hadits gagal dimuat");
+  }
 }
 
 function showHadits() {
@@ -467,7 +499,7 @@ setInterval(showSlide,10000);
 setInterval(loadJadwal,60000);
 setInterval(loadTarawih,60000);
 setInterval(loadKhotib,60000);
-setInterval(showHadits, 8000);
+//setInterval(showHadits, 8000);
 setInterval(loadHadits, 180000);
 setInterval(showHaditsImage, 10000);
 setInterval(() => {
