@@ -65,20 +65,15 @@ function preloadHaditsImages() {
 
 /* ========== TAMPIL & ROTASI GAMBAR HADITS ========== */
 function showHaditsImage() {
-  const slide = document.getElementById("slide-hadits-images");
   const imgEl = document.getElementById("hadits-image");
+  if (!imgEl || haditsImageURLs.length === 0) return;
 
-  if (!isHaditsImagesActiveWindow()) {
-    slide?.classList.add("hidden");
-    return;
-  }
+  // Opsional: hanya ganti gambar saat Ramadhan (biar tidak preload di luar Ramadhan)
+  if (!isRamadhanNow()) return;
 
   preloadHaditsImages();
-
-  if (haditsImageURLs.length > 0 && imgEl) {
-    imgEl.src = haditsImageURLs[haditsImgIndex];
-    haditsImgIndex = (haditsImgIndex + 1) % haditsImageURLs.length;
-  }
+  imgEl.src = haditsImageURLs[haditsImgIndex];
+  haditsImgIndex = (haditsImgIndex + 1) % haditsImageURLs.length;
 }
 
 /* ================= DATE MATCH ================= */
@@ -155,34 +150,42 @@ function getPrayerState(cols) {
 }
 /* ================= SLIDE ================= */
 function getSlidesForToday() {
-   const today = new Date().getDay();
-   return today === 5
-       ? ["slide-jadwal", "slide-tarawih", "slide-khotib"]
-       : ["slide-jadwal", "slide-tarawih"];
+  const slides = ["slide-jadwal"];
+
+  // Tambahkan saat Ramadhan saja
+  if (isRamadhanNow()) {
+    slides.push("slide-tarawih", "slide-hadits-images");
+  }
+
+  // Hari Jumat (0=Ahad ... 5=Jumat ... 6=Sabtu)
+  if (new Date().getDay() === 5) {
+    slides.push("slide-khotib");
+  }
+
+  return slides;
 }
+
 function showSlide() {
   const prayerState = todayCols ? getPrayerState(todayCols) : null;
 
   let activeSlides;
 
   if (prayerState) {
-    // Lock saat prepare/active adzan
+    // 🔒 Lock hanya saat mendekati/masuk waktu adzan
     activeSlides = ["slide-jadwal"];
     slideIndex = 0;
-  } else if (isHaditsImagesActiveWindow()) {
-    // Lock Hadits Bergambar di 21:00–22:00 saat Ramadhan
-    activeSlides = ["slide-hadits-images"];
-    slideIndex = 0;
-    showHaditsImage();
   } else {
+    // Rotasi normal (Ramadhan menambah tarawih + hadits images)
     activeSlides = getSlidesForToday();
   }
 
   document.querySelectorAll(".slide").forEach(s => s.classList.add("hidden"));
+
   const active = document.getElementById(activeSlides[slideIndex]);
   if (active) active.classList.remove("hidden");
 
-  if (!prayerState && !isHaditsImagesActiveWindow()) {
+  // Rotasi hanya saat tidak lock
+  if (!prayerState) {
     slideIndex++;
     if (slideIndex >= activeSlides.length) slideIndex = 0;
   }
@@ -455,3 +458,4 @@ loadJadwal();
 loadTarawih();
 loadKhotib();
 loadHadits();
+preloadHaditsImages();
