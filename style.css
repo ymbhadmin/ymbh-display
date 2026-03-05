@@ -469,3 +469,8 @@ body {
   color: var(--gold);
   margin: 0 22px;
 }
+
+/* Sembunyikan ticker sementara */
+.footer .hadits-box {
+  display: none !important;
+}
