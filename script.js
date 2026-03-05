@@ -9,6 +9,78 @@ let haditsList = [];
 let haditsIndex = 0;
 let todayCols = null;
 
+
+/* ================= HADITS IMAGES CONFIG (GitHub Pages) ================= */
+// Pakai URL GitHub Pages atau path relatif
+const baseURL = "https://ymbhadmin.github.io/ymbh-display"; // ganti sesuai punya kamu
+const haditsImageURLs = [
+  `${baseURL}/Hadist-Ramadhan/Hadist1.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist2.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist3.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist4.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist5.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist6.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist7.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist8.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist9.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist10.jpg`,
+];
+
+/* ========== CEK RAMADHAN (bulan Hijriyah ke-9) ========== */
+function isRamadhanNow() {
+  try {
+    const monthNum = parseInt(
+      new Intl.DateTimeFormat("en-u-ca-islamic", { month: "numeric" }).format(new Date()),
+      10
+    );
+    return monthNum === 9;
+  } catch {
+    return false;
+  }
+}
+
+/* ========== CEK WINDOW 21:00–22:00 ========== */
+function isHaditsImagesWindow() {
+  const now = new Date();
+  return now.getHours() === 14; // 21:00–21:59
+}
+
+/* ========== AKTIF SAAT RAMADHAN & 21–22 ========== */
+function isHaditsImagesActiveWindow() {
+  return isRamadhanNow() && isHaditsImagesWindow();
+}
+
+/* ========== PRELOAD GAMBAR ========== */
+let haditsImgIndex = 0;
+let haditsImgsPreloaded = false;
+
+function preloadHaditsImages() {
+  if (haditsImgsPreloaded) return;
+  haditsImageURLs.forEach(url => {
+    const img = new Image();
+    img.src = url;
+  });
+  haditsImgsPreloaded = true;
+}
+
+/* ========== TAMPIL & ROTASI GAMBAR HADITS ========== */
+function showHaditsImage() {
+  const slide = document.getElementById("slide-hadits-images");
+  const imgEl = document.getElementById("hadits-image");
+
+  if (!isHaditsImagesActiveWindow()) {
+    slide?.classList.add("hidden");
+    return;
+  }
+
+  preloadHaditsImages();
+
+  if (haditsImageURLs.length > 0 && imgEl) {
+    imgEl.src = haditsImageURLs[haditsImgIndex];
+    haditsImgIndex = (haditsImgIndex + 1) % haditsImageURLs.length;
+  }
+}
+
 /* ================= DATE MATCH ================= */
 function isTodayMatch(cols) {
    const now = new Date();
@@ -89,30 +161,31 @@ function getSlidesForToday() {
        : ["slide-jadwal", "slide-tarawih"];
 }
 function showSlide() {
+  const prayerState = todayCols ? getPrayerState(todayCols) : null;
 
-    const prayerState = todayCols ? getPrayerState(todayCols) : null;
+  let activeSlides;
 
-    let activeSlides;
+  if (prayerState) {
+    // Lock saat prepare/active adzan
+    activeSlides = ["slide-jadwal"];
+    slideIndex = 0;
+  } else if (isHaditsImagesActiveWindow()) {
+    // Lock Hadits Bergambar di 21:00–22:00 saat Ramadhan
+    activeSlides = ["slide-hadits-images"];
+    slideIndex = 0;
+    showHaditsImage();
+  } else {
+    activeSlides = getSlidesForToday();
+  }
 
-    if (prayerState) {
-        // Lock di jadwal
-        activeSlides = ["slide-jadwal"];
-        slideIndex = 0;
-    } else {
-        activeSlides = getSlidesForToday();
-    }
+  document.querySelectorAll(".slide").forEach(s => s.classList.add("hidden"));
+  const active = document.getElementById(activeSlides[slideIndex]);
+  if (active) active.classList.remove("hidden");
 
-    document.querySelectorAll(".slide")
-        .forEach(s => s.classList.add("hidden"));
-
-    const active = document.getElementById(activeSlides[slideIndex]);
-    if (active) active.classList.remove("hidden");
-
-    // 🔑 Hanya rotasi jika TIDAK dalam prayer mode
-    if (!prayerState) {
-        slideIndex++;
-        if (slideIndex >= activeSlides.length) slideIndex = 0;
-    }
+  if (!prayerState && !isHaditsImagesActiveWindow()) {
+    slideIndex++;
+    if (slideIndex >= activeSlides.length) slideIndex = 0;
+  }
 }
 /* ================= FETCH ================= */
 async function fetchCSV(url) {
@@ -368,6 +441,7 @@ setInterval(loadTarawih,60000);
 setInterval(loadKhotib,60000);
 setInterval(showHadits, 8000);
 setInterval(loadHadits, 180000);
+setInterval(showHaditsImage, 10000);
 setInterval(() => {
     if (todayCols) {
         updateCountdown(todayCols);
