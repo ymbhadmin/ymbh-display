@@ -25,7 +25,6 @@ const haditsImageURLs = [
   `${baseURL}/Hadist-Ramadhan/Hadist9.png`,
   `${baseURL}/Hadist-Ramadhan/Hadist10.png`,
 ];
-haditsImgIndex = Math.floor(Math.random() * haditsImageURLs.length);
 
 /* ========== UTIL: CEK SLIDE SEDANG TAMPIL ========== */
 function isSlideVisible(id) {
@@ -83,7 +82,7 @@ function showHaditsImage() {
   preloadHaditsImages();
 
   imgEl.src = haditsImageURLs[haditsImgIndex];
-  haditsImgIndex = (haditsImgIndex + 1) % haditsImageURLs.length;
+  haditsImgIndex = Math.floor(Math.random() * haditsImageURLs.length);
 }
 
 
