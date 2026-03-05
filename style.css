@@ -424,3 +424,48 @@ body {
     min-height: 520px; /* adjust untuk kenyamanan komposisi */
   }
 }
+
+/* ===== RUNNING TEXT / TICKER ===== */
+.hadits-box {
+  /* background & border sudah kamu punya di .footer; ini fokus ke layout ticker */
+  overflow: hidden;                 /* penting: sembunyikan yang keluar */
+  padding: 0;                       /* biar tinggi rapih */
+}
+
+.ticker {
+  position: relative;
+  width: 100%;
+  height: 36px;                     /* tinggi ticker (atur sesuai selera) */
+  line-height: 36px;                /* vertikal center */
+  overflow: hidden;
+}
+
+.ticker__track {
+  position: absolute;
+  white-space: nowrap;
+  will-change: transform;
+  display: inline-flex;
+  gap: 64px;                        /* jarak antar dua chunk */
+  animation: ticker-scroll linear infinite;
+  /* durasi akan diset via style inline JS agar proporsional terhadap lebar konten */
+}
+
+.ticker__chunk {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 24px;                  /* ukuran tulisan footer */
+  color: #fff;
+  opacity: 0.95;
+}
+
+/* Keyframes: geser dari 0 ke -50% (karena ada dua chunk kembar) */
+@keyframes ticker-scroll {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+/* (Opsional) separator bullet */
+.ticker .sep {
+  color: var(--gold);
+  margin: 0 22px;
+}
