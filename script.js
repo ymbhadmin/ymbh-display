@@ -14,16 +14,16 @@ let todayCols = null;
 // Pakai URL GitHub Pages atau path relatif
 const baseURL = "https://ymbhadmin.github.io/ymbh-display"; // ganti sesuai punya kamu
 const haditsImageURLs = [
-  `${baseURL}/Hadist-Ramadhan/Hadist1.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist2.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist3.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist4.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist5.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist6.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist7.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist8.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist9.jpg`,
-  `${baseURL}/Hadist-Ramadhan/Hadist10.jpg`,
+  `${baseURL}/Hadist-Ramadhan/Hadist1.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist2.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist3.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist4.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist5.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist6.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist7.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist8.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist9.png`,
+  `${baseURL}/Hadist-Ramadhan/Hadist10.png`,
 ];
 
 /* ========== CEK RAMADHAN (bulan Hijriyah ke-9) ========== */
