@@ -371,3 +371,56 @@ body {
    padding-left: 10px;
    border-left: 2px solid rgba(212,175,55,0.3);
 }
+
+/* ===== SLIDE HADITS BERGAMBAR (DALAM CARD) ===== */
+
+/* Pastikan card bisa menjadi container penuh tinggi konten slide */
+.middle .card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Jika konten slide butuh tinggi penuh area card, gunakan min-height agar dinamis */
+  min-height: 420px; /* sesuaikan bila perlu agar proporsional di layar signage */
+}
+
+/* Slide generik sudah full width/height. Pastikan tidak overflow. */
+.slide {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* cegah konten keluar panel */
+}
+
+/* Wrapper khusus slide gambar hadits agar center secara fleksibel */
+#slide-hadits-images .hadits-img-wrapper {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;     /* vertikal center */
+  justify-content: center; /* horizontal center */
+
+  padding: 12px 16px;      /* beri jarak dari tepi card */
+  box-sizing: border-box;
+}
+
+/* Gambar: skala proporsional, tidak menutupi card */
+#slide-hadits-images img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;                 /* opsional: rounded */
+  box-shadow: 0 6px 18px rgba(0,0,0,.18); /* opsional: depth */
+  transition: opacity .25s ease;
+}
+
+/* Opsional: efek masuk halus saat slide aktif */
+#slide-hadits-images {
+  animation: fadeIn 0.35s ease;
+}
+
+/* (Opsional) Jika ingin card punya tinggi visual konsisten antar slide */
+@media (min-width: 1024px) {
+  .middle .card {
+    min-height: 520px; /* adjust untuk kenyamanan komposisi */
+  }
+}
