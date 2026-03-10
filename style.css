@@ -475,12 +475,15 @@ body {
   display: none !important;
 }
 
-/* Gambar: skala proporsional, tidak menutupi card */
+#slide-announcement .announcement-img-wrapper {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 100%;
+}
+
 #slide-announcement img {
-    max-width: 70%;
-    max-height: 420px;
+    max-width: 75%;
+    max-height: 85%;
     object-fit: contain;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,.18);
-    transition: opacity .25s ease;
 }
