@@ -9,11 +9,6 @@ let haditsList = [];
 let haditsIndex = 0;
 let todayCols = null;
 
-/* ================= ANNOUNCEMENTS ================= */
-const announcementBaseURL = `${baseURL}/Announcements`;
-let announcementImages = [];
-let announcementIndex = 0;
-
 /* ================= HADITS IMAGES CONFIG (GitHub Pages) ================= */
 // Pakai URL GitHub Pages atau path relatif
 const baseURL = "https://ymbhadmin.github.io/ymbh-display"; // ganti sesuai punya kamu
@@ -29,6 +24,11 @@ const haditsImageURLs = [
   `${baseURL}/Hadist-Ramadhan/Hadist9.png`,
   `${baseURL}/Hadist-Ramadhan/Hadist10.png`,
 ];
+
+/* ================= ANNOUNCEMENTS ================= */
+const announcementBaseURL = `${baseURL}/Announcements`;
+let announcementImages = [];
+let announcementIndex = 0;
 
 /* ========== UTIL: CEK SLIDE SEDANG TAMPIL ========== */
 function isSlideVisible(id) {
