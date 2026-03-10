@@ -9,6 +9,10 @@ let haditsList = [];
 let haditsIndex = 0;
 let todayCols = null;
 
+/* ================= ANNOUNCEMENTS ================= */
+const announcementBaseURL = `${baseURL}/Announcements`;
+let announcementImages = [];
+let announcementIndex = 0;
 
 /* ================= HADITS IMAGES CONFIG (GitHub Pages) ================= */
 // Pakai URL GitHub Pages atau path relatif
@@ -201,6 +205,10 @@ function getSlidesForToday() {
 
   const isFriday = new Date().getDay() === 5; // 0=Ahad ... 5=Jumat ... 6=Sabtu
 
+  for (let i = 0; i < announcementImages.length; i++) {
+    slides.push("slide-announcement");
+  }
+
   if (isRamadhanNow()) {
     // Setelah Jadwal → Imam Tarawih
     slides.push("slide-tarawih");
@@ -296,6 +304,28 @@ function showHadits() {
             haditsIndex = 0;
 
     }, 300);
+}
+
+/* ================= ANNOUNCEMENTS ================= */
+async function loadAnnouncements() {
+ try {
+   const res = await fetch(`${announcementBaseURL}/announcements.json`, { cache: "no-store" });
+   const files = await res.json();
+   announcementImages = files.map(f => `${announcementBaseURL}/${f}`);
+ } catch (e) {
+   console.log("Announcement load failed");
+ }
+}
+
+function showAnnouncement() {
+ const imgEl = document.getElementById("announcement-image");
+ if (!imgEl || announcementImages.length === 0) return;
+ if (!isSlideVisible("slide-announcement")) return;
+ imgEl.src = announcementImages[announcementIndex];
+ announcementIndex++;
+ if (announcementIndex >= announcementImages.length) {
+   announcementIndex = 0;
+ }
 }
 /* ================= JADWAL ================= */
 async function loadJadwal() {
@@ -508,11 +538,13 @@ setInterval(() => {
         highlightNextPrayer(todayCols);
     }
 }, 1000);
+setInterval(showAnnouncement, 10000);
 /* ================= INIT ================= */
 updateClock();
-showSlide();
 loadJadwal();
 loadTarawih();
 loadKhotib();
 loadHadits();
+loadAnnouncements();
 preloadHaditsImages();
+showSlide();
