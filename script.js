@@ -205,9 +205,9 @@ function getSlidesForToday() {
 
   const isFriday = new Date().getDay() === 5; // 0=Ahad ... 5=Jumat ... 6=Sabtu
 
-  for (let i = 0; i < announcementImages.length; i++) {
-    slides.push("slide-announcement");
-  }
+  //for (let i = 0; i < announcementImages.length; i++) {
+  //  slides.push("slide-announcement");
+  //}
 
   if (isRamadhanNow()) {
     // Setelah Jadwal → Imam Tarawih
@@ -525,7 +525,7 @@ function updateClock(){
 }
 /* ================= INTERVAL ================= */
 setInterval(updateClock,1000);
-setInterval(showSlide,10000);
+setInterval(showSlide,60000);
 setInterval(loadJadwal,60000);
 setInterval(loadTarawih,60000);
 setInterval(loadKhotib,60000);
