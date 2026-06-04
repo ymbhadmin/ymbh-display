@@ -206,9 +206,9 @@ function getSlidesForToday() {
   const isFriday = new Date().getDay() === 5; // 0=Ahad ... 5=Jumat ... 6=Sabtu
 
   //comment untuk menghilangkan announcement
-  //for (let i = 0; i < announcementImages.length; i++) {
-  //  slides.push("slide-announcement");
-  //}
+  for (let i = 0; i < announcementImages.length; i++) {
+    slides.push("slide-announcement");
+  }
 
   if (isRamadhanNow()) {
     // Setelah Jadwal → Imam Tarawih
@@ -546,6 +546,6 @@ loadJadwal();
 loadTarawih();
 loadKhotib();
 loadHadits();
-//loadAnnouncements();
+loadAnnouncements();
 preloadHaditsImages();
 showSlide();
